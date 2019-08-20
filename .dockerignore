@@ -1,2 +1,5 @@
 node_modules
+.vscode
+docker-compose.yml
 npm-debug.log
+.eslintrc.json
