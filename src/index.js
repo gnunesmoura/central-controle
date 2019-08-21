@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const logger = require('./utils/logger');
 // const graphqlHTTP = require('express-graphql');
-const indexRouter = require('./routes/index');
+const indexRouter = require('./routes');
 
 // const schema = require('./stock/graphql.schema');
 // const root = require('./stock/graphql.resolvers');
