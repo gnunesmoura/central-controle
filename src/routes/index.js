@@ -1,8 +1,8 @@
 const express = require('express');
-const client = require('../utils/elastic-search-client');
+const client = require('./../utils/elastic-search-client');
 
 const router = express.Router();
-const logger = require('./../utils/logger');
+const logger = require('../utils/logger');
 
 router.post('/', (req, res) => {
   logger.info(req.body);
