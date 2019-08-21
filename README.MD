@@ -15,10 +15,10 @@ Modifique a senha `senhaHomologacao` nos arquivos docker-compose.yml e esconfig/
 
 Para buildar e iniciar o sistema
 ```
-docker-compose up -d
+sudo docker-compose up -d
 ```
 
 Para parar o sistema
 ```
-docker-compose stop
+sudo docker-compose stop
 ```

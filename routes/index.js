@@ -1,11 +1,13 @@
 const express = require('express');
-const client = require('./../elastic-search-client');
+const client = require('../utils/elastic-search-client');
 
 const router = express.Router();
+const logger = require('./../utils/logger');
 
 router.post('/', (req, res) => {
-  console.log(req.body);
-  console.log(req.headers);
+  logger.info(req.body);
+  logger.info(req.headers);
+  logger.info("asdfafasfasfasdfasdfas");
 
   client.cluster.health({}, (err, resp, status) => {
     res.status(200).send({ data: resp });

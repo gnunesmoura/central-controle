@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan'); 
+const morgan = require('morgan');
+const logger = require('./utils/logger');
 // const graphqlHTTP = require('express-graphql');
 const indexRouter = require('./routes/index');
 
@@ -11,7 +12,7 @@ const indexRouter = require('./routes/index');
 
 // Create an express server and a GraphQL endpoint
 const app = express();
-app.use(logger('dev'));
+app.use(morgan('common', { common: logger.info }));
 app.use(cookieParser());
 app.use(express.json());
 
