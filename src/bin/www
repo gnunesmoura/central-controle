@@ -1,5 +1,7 @@
-const server = require('../index');
+const configureAuthServer = require('../index');
 
-server.listen().then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+configureAuthServer()
+  .then(server => server.listen())
+  .then(({ url }) => {
+    console.log(`🚀 Server ready at ${url}`);
+  });
