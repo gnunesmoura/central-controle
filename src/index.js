@@ -1,26 +1,40 @@
-require('dotenv').config();
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const morgan = require('morgan');
-const logger = require('./utils/logger');
-// const graphqlHTTP = require('express-graphql');
-const indexRouter = require('./routes');
+const { ApolloServer, gql } = require('apollo-server');
 
-// const schema = require('./stock/graphql.schema');
-// const root = require('./stock/graphql.resolvers');
+const getUser = token => (token === 'tokenDeAcesso' ? ({ id: 12345, roles: ['user', 'admin'] }) : null);
 
+/**
+ * O context é um objeto que é passado para todos os resolvers, útil para passar conexões com o
+ * banco de dados, váriaveis de ambiente, usuario cadastrado, etc...
+ */
+const server = new ApolloServer({
+  typeDefs: gql`
+  type Query {
+    user (id: ID!): User
+   }
+   
+   type User {
+    id: ID!
+    name: String!
+   }`,
+  resolvers: {
+    users: (parent, args, context) => {
+      // to-do throw an error.
+      if (!context.user) return null;
 
-// Create an express server and a GraphQL endpoint
-const app = express();
-app.use(morgan('common', { common: logger.info }));
-app.use(cookieParser());
-app.use(express.json());
+      return ['bob', 'jake'];
+    },
+  },
+  context: ({ req }) => {
+    const token = req.headers.authorization || '';
 
-app.use('/', indexRouter);
-// app.use('/graphql', graphqlHTTP({
-//   schema,
-//   rootValue: root,
-//   graphiql: true,
-// }));
+    const user = getUser(token);
 
-module.exports = app;
+    return { user };
+  },
+});
+
+module.exports = server;
+
+server.listen().then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+});
