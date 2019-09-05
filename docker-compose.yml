@@ -1,5 +1,5 @@
 ---
-version: '3'
+version: "3"
 services:
   # The environment variable "TAG" is used throughout this file to
   # specify the version of the images to run. The default is set in the
@@ -9,12 +9,30 @@ services:
   #   TAG=6.0.0-beta1 docker-compose up
   #
   # REF: https://docs.docker.com/compose/compose-file/#variable-substitution
+
+  central-acesso:
+    container_name: central-acesso
+    build: .
+    ports:
+      - 4000:4000
+    links:
+      - mongo
+
+  mongo:
+    image: mongo:3.7.9-jessie
+    container_name: mongo
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${TAG}
     container_name: elasticsearch
-    environment: ['http.host=0.0.0.0', 'transport.host=127.0.0.1', 'ELASTIC_PASSWORD=${ELASTIC_PASSWORD}']
-    ports: ['127.0.0.1:9200:9200']
-    networks: ['stack']
+    environment:
+      [
+        "http.host=0.0.0.0",
+        "transport.host=127.0.0.1",
+        "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}",
+      ]
+    ports: ["127.0.0.1:9200:9200"]
+    networks: ["main"]
     volumes:
       - esdata1:/usr/share/elasticsearch/data
 
@@ -24,21 +42,21 @@ services:
     environment:
       - ELASTICSEARCH_USERNAME=kibana
       - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
-    ports: ['127.0.0.1:5601:5601']
-    networks: ['stack']
-    depends_on: ['elasticsearch']
+    ports: ["127.0.0.1:5601:5601"]
+    networks: ["main"]
+    depends_on: ["elasticsearch"]
 
   logstash:
     image: docker.elastic.co/logstash/logstash:${TAG}
     container_name: logstash
     environment:
-      - 'xpack.monitoring.elasticsearch.password=${ELASTIC_PASSWORD}'
+      - "xpack.monitoring.elasticsearch.password=${ELASTIC_PASSWORD}"
     # Provide a simple pipeline configuration for Logstash with a bind-mounted file.
     volumes:
       - ./config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-    ports: ['5000:5000']
-    networks: ['stack']
-    depends_on: ['elasticsearch', 'setup_logstash']
+    ports: ["5000:5000"]
+    networks: ["main"]
+    depends_on: ["elasticsearch", "setup_logstash"]
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:${TAG}
@@ -46,39 +64,54 @@ services:
     command: -e -E 'output.elasticsearch.password=${ELASTIC_PASSWORD}'
     # If the host system has logs at "/var/log", mount them at "/mnt/log"
     # inside the container, where Filebeat can find them.
-    volumes: ['./log:/mnt/log:ro']
-    networks: ['stack']
-    depends_on: ['elasticsearch', 'setup_filebeat']
+    volumes: ["./log:/mnt/log:ro"]
+    networks: ["main"]
+    depends_on: ["elasticsearch", "setup_filebeat"]
 
   # Run a short-lived container to set up Logstash.
   setup_logstash:
     image: centos:7
     container_name: setup_logstash
-    volumes: ['./scripts/setup-logstash.sh:/usr/local/bin/setup-logstash.sh:ro']
-    command: ['/bin/bash', '-c', 'cat /usr/local/bin/setup-logstash.sh | tr -d "\r" | bash']
-    environment: ['ELASTIC_PASSWORD=${ELASTIC_PASSWORD}']
-    networks: ['stack']
-    depends_on: ['elasticsearch']
+    volumes: ["./scripts/setup-logstash.sh:/usr/local/bin/setup-logstash.sh:ro"]
+    command:
+      [
+        "/bin/bash",
+        "-c",
+        'cat /usr/local/bin/setup-logstash.sh | tr -d "\r" | bash',
+      ]
+    environment: ["ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"]
+    networks: ["main"]
+    depends_on: ["elasticsearch"]
 
   setup_kibana:
     image: centos:7
     container_name: setup_kibana
-    volumes: ['./scripts/setup-kibana.sh:/usr/local/bin/setup-kibana.sh:ro']
-    command: ['/bin/bash', '-c', 'cat /usr/local/bin/setup-kibana.sh | tr -d "\r" | bash']
-    environment: ['ELASTIC_PASSWORD=${ELASTIC_PASSWORD}']
-    networks: ['stack']
-    depends_on: ['elasticsearch']
+    volumes: ["./scripts/setup-kibana.sh:/usr/local/bin/setup-kibana.sh:ro"]
+    command:
+      [
+        "/bin/bash",
+        "-c",
+        'cat /usr/local/bin/setup-kibana.sh | tr -d "\r" | bash',
+      ]
+    environment: ["ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"]
+    networks: ["main"]
+    depends_on: ["elasticsearch"]
 
   setup_filebeat:
     image: docker.elastic.co/beats/filebeat:${TAG}
     container_name: setup_filebeat
-    volumes: ['./scripts/setup-beat.sh:/usr/local/bin/setup-beat.sh:ro']
-    command: ['/bin/bash', '-c', 'cat /usr/local/bin/setup-beat.sh | tr -d "\r" | bash -s filebeat']
-    environment: ['ELASTIC_PASSWORD=${ELASTIC_PASSWORD}']
-    networks: ['stack']
-    depends_on: ['kibana']
+    volumes: ["./scripts/setup-beat.sh:/usr/local/bin/setup-beat.sh:ro"]
+    command:
+      [
+        "/bin/bash",
+        "-c",
+        'cat /usr/local/bin/setup-beat.sh | tr -d "\r" | bash -s filebeat',
+      ]
+    environment: ["ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"]
+    networks: ["main"]
+    depends_on: ["kibana"]
 
-networks: {stack: {}}
+networks: { main: {} }
 
-volumes:
+volumes: 
   esdata1:

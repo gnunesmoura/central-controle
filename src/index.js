@@ -1,16 +1,13 @@
-const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServer } = require('apollo-server');
 const { AccountsServer } = require('@accounts/server');
 const { AccountsModule } = require('@accounts/graphql-api');
 const { AccountsPassword } = require('@accounts/password');
 const { DatabaseManager } = require('@accounts/database-manager');
 const { Mongo } = require('@accounts/mongo');
 const mongoose = require('mongoose');
-const resolvers = require('./graphql/resolvers');
-const schema = require('./graphql/schema');
-const context = require('./graphql/context');
 
 const configureAuthServer = async () => {
-  await mongoose.connect('mongodb://localhost:27017/accounts-js-graphql-example', {
+  await mongoose.connect('mongodb://mongo:27017/central-acesso', {
     useNewUrlParser: true,
   });
 
@@ -52,17 +49,10 @@ const configureAuthServer = async () => {
     resolvers: accountsGraphQL.resolvers,
     typeDefs: accountsGraphQL.typeDefs,
     context: accountsGraphQL.context,
+    introspection: true,
+    playground: true,
   });
 };
 
-/**
- * O context é um objeto que é passado para todos os resolvers, útil para passar conexões com o
- * banco de dados, váriaveis de ambiente, usuario cadastrado, etc...
- */
-// const server = new ApolloServer({
-//   resolvers,
-//   typeDefs: gql`${schema}`,
-//   context,
-// });
 
 module.exports = configureAuthServer;
