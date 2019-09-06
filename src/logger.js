@@ -1,4 +1,5 @@
 const winston = require('winston');
+const nconf = require('nconf');
 
 const { createLogger, format, transports } = winston;
 
@@ -19,7 +20,7 @@ const logger = createLogger({
   ],
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (nconf.get('NODE_ENV') !== 'production') {
   logger.add(new transports.Console({
     format: format.combine(
       format.colorize(),

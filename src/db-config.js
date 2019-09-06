@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
+const nconf = require('nconf');
 const logger = require('./logger');
 
-mongoose.connect('mongodb://mongo:27017/central-acesso', { useNewUrlParser: true });
+mongoose.connect(nconf.get('database:connectString'), { useNewUrlParser: true });
 
-const db = mongoose.connection;
-
-db.on('error', (err) => {
-  logger.error(err);
+mongoose.connection.on('error', (err) => {
+  throw err;
 });
 
-db.once('open', () => logger.info('Connected to mongodb'));
+mongoose.connection.once('open', () => logger.info('Connected to mongodb'));

@@ -1,6 +1,8 @@
+
+const nconf = require('./env-config');
 const server = require('../index');
 
-server.listen()
+server.listen({ port: nconf.get('port') })
   .then(({ url }) => {
     console.log(`🚀 Server ready at ${url}`);
   });
