@@ -1,5 +1,5 @@
 const nconf = require('nconf');
-const logger = require('../logger');
+const logger = require('./logger');
 
 /**
  * Hierarchical configuration with files, environment variables and command-line arguments.
@@ -33,9 +33,12 @@ if (nconf.get('configPath')) {
 // 5º
 nconf.defaults({
   port: 4000,
+  tokenSecret: '123segredo123',
   database: {
     connectString: 'mongodb://mongo:27017/central-acesso',
   },
 });
+
+console.log(nconf.get('database:connectString'));
 
 module.exports = nconf;
