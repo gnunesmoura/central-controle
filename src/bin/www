@@ -1,4 +1,4 @@
-
+const nconf = require('nconf');
 const server = require('../index');
 
 server.listen({ port: nconf.get('port') })
