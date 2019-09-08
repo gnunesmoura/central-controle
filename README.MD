@@ -1,24 +1,27 @@
-Stack baseada nos serviços:
- - Elasticsearch
- - Kibana
- - Logstash
- 
-Serão adicionados os serviços [htppd](https://hub.docker.com/_/httpd) e [conductor](https://netflix.github.io/conductor/).
- 
-Central de controle exemplo escrita em Node.js. Todos os serviços são iniciados através de contêineres.
+# central-controle
 
-Antes de buildar o sistema realize:
-1. Instalação do [docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) e [docker-compose](https://docs.docker.com/compose/install/#install-compose).
-2. Verificação da configuração de memória para vm. [documentação](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html). 
+Microserviço web baseado em [GraphQL](https://graphql.org/) para [recebimento de informação e controle de nós sensores sem 
+fio via https](https://github.com/gnunesmoura/controlador-esp8266-https).
 
-Modifique a senha `senhaHomologacao` nos arquivos docker-compose.yml e esconfig/logstash.conf
+Pré-requisitos:
+1. [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/);
+2. [docker-compose](https://docs.docker.com/compose/install/#install-compose).
 
-Para buildar e iniciar o sistema
+Para entender como funciona a configuração do app veja o arquivo 
+[env-config.js](https://github.com/gnunesmoura/central-controle/blob/master/src/env-config.js)
+
+## Deploy local
+1. Faça o build da imagem
 ```
-sudo docker-compose up -d
+sudo docker-compose build
 ```
 
-Para parar o sistema
+2. Inicie o microserviço
+```
+sudo docker-compose up --detach
+```
+
+Para parar o microserviço
 ```
 sudo docker-compose stop
 ```
