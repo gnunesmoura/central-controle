@@ -1,8 +1,7 @@
 FROM node:10 as build
 WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm ci --only=production
 COPY . .
+RUN npm ci --only=production
 
 FROM node:10 as unit-tests
 WORKDIR /usr/src/app
