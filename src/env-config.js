@@ -19,6 +19,8 @@ nconf.argv();
 nconf.env();
 
 nconf.required(['NODE_ENV']);
+const isProduction = nconf.get('NODE_ENV') === 'production';
+
 logger.info(`Service ${nconf.get('service:name')} started with NODE_ENV=${nconf.get('NODE_ENV')}`);
 
 // 4º
@@ -35,10 +37,8 @@ nconf.defaults({
   port: 4000,
   tokenSecret: '123segredo123',
   database: {
-    connectString: 'mongodb://mongo:27017/central-acesso',
+    connectString: `mongodb://${isProduction ? 'mongo' : 'localhost'}:27017/central-acesso`,
   },
 });
-
-console.log(nconf.get('database:connectString'));
 
 module.exports = nconf;
