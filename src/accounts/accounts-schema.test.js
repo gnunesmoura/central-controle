@@ -14,12 +14,24 @@ let context;
 let schema;
 
 const queries = {
-  createUser: username => `
+  createUser: (username, password = 'senha') => `
     mutation {
       createUser(
-        user: { username: "${username}", email: "${username}@gmail.com", password: "senha" }
-      ) 
-    }  
+        user: { username: "${username}", email: "${username}@gmail.com", password: "${password}" }
+      )
+    }
+  `,
+  authenticateUser: (username, password) => `
+    mutation Auth {
+      authenticate(
+        serviceName: "password"
+        params: { password: "${password}", user: { username: "${username}", email: "${username}@gmail.com" } }
+      ) {
+        tokens {
+          accessToken
+        }
+      }
+    }
   `,
 };
 
@@ -49,11 +61,21 @@ it('createUser mutation returns only data:createUser = null on sucess', async ()
   const result = await graphql(schema, queries.createUser('Gustavo'), rootValue, context);
 
   expect(result).toEqual({ data: { createUser: null } });
-}, 100000);
+}, 500);
 
 it('createUser mutation returns data:createUser = null and errors on failure', async () => {
   const result = await graphql(schema, queries.createUser('Gustavo'), rootValue, context);
 
   expect(result.data).toEqual({ createUser: null });
   expect(result.errors[0]).toEqual(expect.any(GraphQLError));
-}, 100000);
+}, 500);
+
+it('existing user can be authenticated', async () => {
+  const result = await graphql(schema, queries.authenticateUser('Gustavo', 'senha'), rootValue, context);
+  expect(result.data.authenticate.tokens.accessToken).toEqual(expect.any(String));
+});
+
+it('existing user won\'t authenticated with wrong password', async () => {
+  const result = await graphql(schema, queries.authenticateUser('Gustavo', 'senhaerrada'), rootValue, context);
+  expect(result.errors[0].message).toEqual('Invalid credentials');
+});
