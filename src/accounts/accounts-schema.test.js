@@ -4,7 +4,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const { graphql, GraphQLError } = require('graphql');
 const { makeExecutableSchema } = require('graphql-tools');
 const mongoose = require('mongoose');
-const buildAccountsGraphQL = require('./index');
+const buildAccountsGraphQL = require('./buildAccountsGraphQL');
 
 const rootValue = {};
 let mongoServer;
