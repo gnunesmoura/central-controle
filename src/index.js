@@ -2,26 +2,29 @@
 require('./env-config');
 require('./db-config');
 const { ApolloServer } = require('apollo-server');
-const { mergeTypeDefs } = require('graphql-toolkit');
+const { mergeTypeDefs, mergeResolvers } = require('graphql-toolkit');
 const { connection } = require('mongoose');
-const authorization = require('./authorization');
+const sensorData = require('./sensor-data');
 const { buildAccountsGraphQL } = require('./accounts');
 
 const accounts = buildAccountsGraphQL(connection);
 
 const typeDefs = mergeTypeDefs([
-  authorization.typeDefs,
   accounts.typeDefs,
+  sensorData.typeDefs,
 ]);
 
-const resolvers = [
-  authorization.resolvers,
+const resolvers = mergeResolvers([
   accounts.resolvers,
-];
+  sensorData.resolvers,
+]);
 
 module.exports = new ApolloServer({
   resolvers,
   typeDefs,
+  schemaDirectives: {
+    ...accounts.schemaDirectives,
+  },
   context: accounts.context,
   introspection: true,
   playground: true,
