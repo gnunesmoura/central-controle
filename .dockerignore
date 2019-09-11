@@ -3,5 +3,4 @@ node_modules
 docker-compose.yml
 .git*
 README.MD
-Dockerfile
 log
