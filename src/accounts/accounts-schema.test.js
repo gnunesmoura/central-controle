@@ -78,4 +78,5 @@ it('existing user can be authenticated', async () => {
 it('existing user won\'t authenticated with wrong password', async () => {
   const result = await graphql(schema, queries.authenticateUser('Gustavo', 'senhaerrada'), rootValue, context);
   expect(result.errors[0].message).toEqual('Invalid credentials');
+  console.log('testando modificação minima');
 });
