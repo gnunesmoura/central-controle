@@ -14,7 +14,7 @@ pipeline {
     agent {
         docker {
             image 'node:10'
-            args '-v /home/vagrant/sonar-scanner-4.0.0.1744-linux/bin/:/home/vagrant/sonar-scanner-4.0.0.1744-linux/bin/ --link sonarqube:sonarqube'
+            args '-v /home/vagrant/sonar-scanner-4.0.0.1744-linux:/home/vagrant/sonar-scanner-4.0.0.1744-linux --link sonarqube:sonarqube'
         }
     }
     
@@ -34,7 +34,7 @@ pipeline {
     
         stage('Realizar coleta de métricas') {
             steps {
-                sh '/home/vagrant/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner   -Dsonar.projectKey=central-controle   -Dsonar.sources=.   -Dsonar.host.url=http://sonarqube:9000   -Dsonar.login=sonarqube:token'
+                sh '/home/vagrant/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner   -Dsonar.projectKey=central-controle   -Dsonar.sources=.   -Dsonar.host.url=http://sonarqube:9000   -Dsonar.login=72ed6f2f3d81ee068198b1e5734d607bf441ec86'
             }
         }
     }
