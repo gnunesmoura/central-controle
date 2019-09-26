@@ -40,27 +40,35 @@ pipeline {
         }
     }
     
-    parameters { string(name: 'SONAR_TOKEN', defaultValue: 'token', description: '') }
-    parameters { string(name: 'PROJECT_KEY', defaultValue: 'projectKey', description: '') }
-
+    parameters { 
+        string(name: 'PROJECT_KEY', defaultValue: 'central-controle', description: 'Identificação do projeto') 
+        string(name: 'SONAR_TOKEN', defaultValue: 'token', description: 'Token de acesso ao SonarQube')
+    }
+ 
     stages {
-        stage('Clone do repositório') {
+        stage('Clonando o repositório') {
             steps {
                 git 'https://github.com/gnunesmoura/central-controle.git'
             }
         }
         
-        stage('Execução de testes automaticos') {
+        stage('Instalando dependências') {
             steps {
                 sh 'npm i'
+            }
+        }
+        
+        stage('Execução de testes automáticos') {
+            steps {
                 sh 'npm run test'
             }
         }
     
         stage('Realizar coleta de métricas') {
             steps {
-                sh '/home/vagrant/sonar-scanner/bin/sonar-scanner   -Dsonar.projectKey="${PROJECT_KEY}"   -Dsonar.sources=.   -Dsonar.host.url=http://sonarqube:9000   -Dsonar.login="${SONAR_TOKEN}"'
+                sh '/home/vagrant/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey="${PROJECT_KEY}" -Dsonar.sources=. -Dsonar.host.url=http://sonarqube:9000 -Dsonar.login="${SONAR_TOKEN}"'
             }
         }
     }
-}```
+}
+```
